@@ -4,12 +4,14 @@ import { formatDistanceToNow } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 interface CardProps {
   note: {
+    id: string;
     date: Date;
     content: string;
   }
+  onDelete(id: string): void
 }
 
-export function NoteCard({ note }: CardProps) {
+export function NoteCard({ note, onDelete }: CardProps) {
   return (
     <Dialog.Root>
       <Dialog.Trigger className={`
@@ -31,8 +33,9 @@ export function NoteCard({ note }: CardProps) {
       <Dialog.Portal>
         <Dialog.Overlay className='inset-0 fixed bg-slate-950/70' />
         <Dialog.Content className={`
-          fixed left-1/2 top-1/2 max-w-[640px] w-full h-[60vh] rounded-md flex flex-col 
-          outline-none -translate-x-1/2 -translate-y-1/2 bg-slate-700
+          fixed flex flex-col w-full overflow-hidden inset-0 outline-none
+          md:inset-auto bg-slate-700 md:rounded-md md:left-1/2 md:top-1/2 
+          md:max-w-[640px] md:h-[60vh] md:-translate-y-1/2 md:-translate-x-1/2          
         `}>
           <Dialog.Close className='absolute right-0 top-0 bg-slate-800 p-1.5 text-slate-400 hover:text-slate-100'>
             <X className='size-5' />
@@ -40,7 +43,7 @@ export function NoteCard({ note }: CardProps) {
 
           <div className="flex flex-1 flex-col gap-3 p-5">
             <span className='text-sm font-medium text-slate-300'>
-              {note.date.toISOString()}
+              {formatDistanceToNow(note.date, { locale: ptBR, addSuffix: true })}
             </span>
             <p className='text-sm leading-6 text-slate-400'>
               {note.content}        
@@ -48,9 +51,10 @@ export function NoteCard({ note }: CardProps) {
           </div>
 
           <button type="button" 
+            onClick={() => onDelete(note.id)}
             className={`
-              w-full bg-slate-800 py-4 text-center text-sm text-slate-300 outline-none rounded-b-md
-              font-medium group
+              w-full bg-slate-800 py-4 text-center text-sm text-slate-300 outline-none 
+              md:rounded-b-md font-medium group
             `}>
             Deseja <span className='text-red-400 group-hover:underline'>apagar essa nota</span>?
           </button>
